@@ -9,9 +9,20 @@
   revision = "9f541cc9db5d55bce703bd99987c9d5cb8eea45e"
   version = "v1.0.0"
 
+[[projects]]
+  branch = "master"
+  digest = "1:fe3d0e22f77528380b849ae3627bfa190713e0209b652c0c1321e416edb00dd3"
+  name = "github.com/newbiediver/golib"
+  packages = ["aes256"]
+  pruneopts = "UT"
+  revision = "658efe550583e46b859f0a9d66be71e262068045"
+
 [solve-meta]
   analyzer-name = "dep"
   analyzer-version = 1
-  input-imports = ["github.com/dustin/go-humanize"]
+  input-imports = [
+    "github.com/dustin/go-humanize",
+    "github.com/newbiediver/golib/aes256",
+  ]
   solver-name = "gps-cdcl"
   solver-version = 1

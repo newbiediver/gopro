@@ -311,15 +311,15 @@ func main() {
 		fmt.Printf("Encoded : %s\n", file)
 		return
 	}
-	binName := "Instructor"
+	binName := "filso"
 
 	fmt.Printf("Update contents of \"%s\" started\n", binName)
 
 	// 집
 	if runtime.GOOS == "windows" {
-		baseURL = "http://instructor.jenni.kr:9090/instructor/win"
+		baseURL = "http://k8s.fil.so:9000/filso/win"
 	} else {
-		baseURL = "http://instructor.jenni.kr:9090/instructor/mac"
+		baseURL = "http://k8s.fil.so:9000/filso/mac"
 	}
 
 	// 회사
@@ -369,11 +369,11 @@ func main() {
 	time.Sleep(1 * time.Second)
 
 	if runtime.GOOS == "windows" {
-		cmd := exec.Command("Instructor")
+		cmd := exec.Command("filso.exe")
 		cmd.Start()
 	} else {
 		exePath := getFullPath()
-		exePath += "Instructor"
+		exePath += "filso"
 		cmd := exec.Command(exePath)
 		cmd.Start()
 	}
