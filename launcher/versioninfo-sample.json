@@ -3,6 +3,7 @@
     "root": "contents",
     "history": [
         {
+            "app": "v1.0.0",
             "version": 1,
             "files": ["3271bf7c894caf6050b277678e354cb0"]
         }
