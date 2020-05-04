@@ -162,7 +162,7 @@ func getTmpPath() string {
 		panic(err)
 	}
 
-	tmp := usr.HomeDir + "/Applications/InstructorSupported/"
+	tmp := usr.HomeDir + "/Applications/FilsoSupported/"
 
 	if _, err := os.Stat(tmp); os.IsNotExist(err) {
 		os.MkdirAll(tmp, os.ModePerm)
@@ -316,18 +316,25 @@ func main() {
 	fmt.Printf("Update contents of \"%s\" started\n", binName)
 
 	// 집
-	if runtime.GOOS == "windows" {
+	/*if runtime.GOOS == "windows" {
 		baseURL = "http://k8s.fil.so:9000/filso/win"
 	} else {
 		baseURL = "http://k8s.fil.so:9000/filso/mac"
-	}
-
-	// 회사
-	/*if runtime.GOOS == "windows" {
-		baseURL = "http://192.168.0.194:8080/instructor/win"
-	} else {
-		baseURL = "http://192.168.0.194:8080/instructor/mac"
 	}*/
+
+	// Local
+	/*if runtime.GOOS == "windows" {
+		baseURL = "http://localhost:9000/filso/win"
+	} else {
+		baseURL = "http://localhost:9000/filso/mac"
+	}*/
+
+	// GKE
+	if runtime.GOOS == "windows" {
+		baseURL = "http://update.fil.so/filso/win"
+	} else {
+		baseURL = "http://update.fil.so/filso/mac"
+	}
 
 	fileURL := fmt.Sprintf("%s/versioninfo.json", baseURL)
 	err := downloadFile("versioninfo.json", fileURL)
