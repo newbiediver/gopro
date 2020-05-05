@@ -317,9 +317,9 @@ func main() {
 
 	// 집
 	/*if runtime.GOOS == "windows" {
-		baseURL = "http://k8s.fil.so:9000/filso/win"
+		baseURL = "http://10.10.10.2:9000/filso/win"
 	} else {
-		baseURL = "http://k8s.fil.so:9000/filso/mac"
+		baseURL = "http://10.10.10.2:9000/filso/mac"
 	}*/
 
 	// Local

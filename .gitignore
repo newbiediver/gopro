@@ -15,3 +15,4 @@
 # vendor/
 .idea
 launcher/vendor
+.DS_Store
