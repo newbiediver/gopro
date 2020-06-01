@@ -4,15 +4,14 @@ import (
 	"bufio"
 	"encoding/binary"
 	"fmt"
+	"github.com/fatih/color"
+	"github.com/newbiediver/golib/socket"
+	"golang.org/x/crypto/ssh/terminal"
 	"os"
 	"runtime"
-	"github.com/newbiediver/golib/socket"
 	"strconv"
 	"strings"
 	"syscall"
-
-	"github.com/fatih/color"
-	"golang.org/x/crypto/ssh/terminal"
 )
 
 const request uint8 = 1
@@ -31,10 +30,14 @@ type xshHandler struct {
 	logShow       bool
 }
 
-var xsh *xshHandler
-var doneLogin chan bool
-var feedback chan bool
-var tryLogin int
+var (
+	xsh *xshHandler
+	doneLogin chan bool
+	feedback chan bool
+	tryLogin int
+
+	networkBuffer []byte
+)
 
 func main() {
 	defer func() {
@@ -68,11 +71,30 @@ func main() {
 		os.Exit(0)
 	}
 
+	networkBuffer = make([]byte, 32768)
+
 	doneLogin = make(chan bool, 1)
 	<-doneLogin
 
 	feedback = make(chan bool, 1)
 	procMainLooop()
+}
+
+func (x *xshHandler) extractBuffer() []byte {
+	header, err := x.xshConnection.Peek(3)
+	if err != nil {
+		return nil
+	}
+
+	rawSize := header[1:3]
+	size := binary.LittleEndian.Uint16(rawSize)
+
+	err = x.xshConnection.Read(networkBuffer, int(size))
+	if err != nil {
+		return nil
+	}
+
+	return networkBuffer[:size]
 }
 
 func (x *xshHandler) connectServer(address string, port uint) bool {
@@ -81,7 +103,12 @@ func (x *xshHandler) connectServer(address string, port uint) bool {
 		return false
 	}
 
-	go x.xshConnection.ConnectionHandler(func(p []byte) {
+	go x.xshConnection.ConnectionHandler(func() {
+		p := x.extractBuffer()
+		if p == nil {
+			return
+		}
+
 		msg := p[0]
 		m := uint8(msg)
 
@@ -196,6 +223,7 @@ func procMainLooop() {
 		cyan.Print(xsh.server)
 		fmt.Print("]$ ")
 
+		cmd := ""
 		text := readString(reader)
 		args := strings.Split(text, " ")
 
@@ -214,16 +242,22 @@ func procMainLooop() {
 		}
 
 		if len(args) > 1 {
-			text = args[0]
+			cmd = args[0]
+		} else {
+			cmd = text
 		}
 
-		if text == "log" {
+		if cmd == "log" {
+			if len(args) < 2 {
+				fmt.Println("Usage> log show[or hide]")
+				continue
+			}
 			sendPacket(args[1], cshowlog)
 			<-feedback
 			continue
 		}
 
-		if text == "terminate" {
+		if cmd == "terminate" {
 			fmt.Println("Server will be terminated! Are you sure?")
 			for {
 				fmt.Print("Type yes or no => ")
