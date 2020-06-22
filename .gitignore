@@ -16,3 +16,5 @@
 .idea
 launcher/vendor
 .DS_Store
+cipher/go.sum
+*.sum
