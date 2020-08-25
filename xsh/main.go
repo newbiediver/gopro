@@ -104,31 +104,33 @@ func (x *xshHandler) connectServer(address string, port uint) bool {
 	}
 
 	go x.xshConnection.ConnectionHandler(func() {
-		p := x.extractBuffer()
-		if p == nil {
-			return
-		}
-
-		msg := p[0]
-		m := uint8(msg)
-
-		switch m {
-		case response:
-			onRecvString(string(p[3:]))
-		case login:
-			onRecvNeedLogin(string(p[3:]))
-		case loginResult:
-			if !xsh.parseAuthentication(string(p[3:])) {
-				onRecvNeedLogin(string(p[3:]))
-			} else {
-				doneLogin <- true
+		for {
+			p := x.extractBuffer()
+			if p == nil {
+				break
 			}
-		case consoleLog:
-			onConsoleLog(string(p[3:]))
-		case sshowlog:
-			onRecvString(string(p[3:]))
-		default:
-			fmt.Println("Unknown message")
+
+			msg := p[0]
+			m := uint8(msg)
+
+			switch m {
+			case response:
+				onRecvString(string(p[3:]))
+			case login:
+				onRecvNeedLogin(string(p[3:]))
+			case loginResult:
+				if !xsh.parseAuthentication(string(p[3:])) {
+					onRecvNeedLogin(string(p[3:]))
+				} else {
+					doneLogin <- true
+				}
+			case consoleLog:
+				onConsoleLog(string(p[3:]))
+			case sshowlog:
+				onRecvString(string(p[3:]))
+			default:
+				fmt.Println("Unknown message")
+			}
 		}
 	}, func() {
 		os.Exit(0)
