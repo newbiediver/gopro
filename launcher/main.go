@@ -300,8 +300,8 @@ func main() {
 		}
 	}()
 
-	keyFile = "cdd23d6804dd6e7f89fc375925a152c7"
-	ivFile = "h5KsCjyx=&aC2G8@"
+	keyFile = "00cb0ba6b5af9731146b2bde676c8831"
+	ivFile = "7e913e79dc442275"
 
 	if len(os.Args) > 1 {
 		file, err := encodeFileName(os.Args[1])
@@ -331,9 +331,9 @@ func main() {
 
 	// GKE
 	if runtime.GOOS == "windows" {
-		baseURL = "http://update.fil.so/filso/win"
+		baseURL = "http://update.honeyjam.kr/filso/win"
 	} else {
-		baseURL = "http://update.fil.so/filso/mac"
+		baseURL = "http://update.honeyjam.kr/filso/mac"
 	}
 
 	fileURL := fmt.Sprintf("%s/versioninfo.json", baseURL)
