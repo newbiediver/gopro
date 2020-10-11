@@ -28,6 +28,8 @@ func (c *Contents) LoadContents(rootPath string) {
 		c.RootPath = rootPath
 	}
 
+	_ = os.MkdirAll(rootPath, os.ModePerm)
+
 	_ = filepath.Walk(rootPath, func(path string, info os.FileInfo, err error) error {
 		if !info.IsDir() {
 			ci := ContentsInfo{FilePath: path, FileInfo: info}
