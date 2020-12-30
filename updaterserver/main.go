@@ -5,7 +5,7 @@ import (
 	"github.com/gin-gonic/gin"
 	"log"
 	"net/http"
-	"nm.go/go-server/tools/updaterserver/config"
+	"github.com/newbiediver/gopro/updaterserver/config"
 )
 
 func main() {

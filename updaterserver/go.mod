@@ -1,4 +1,4 @@
-module nm.go/go-server/tools/updaterserver
+module github.com/newbiediver/gopro/updaterserver
 
 go 1.14
 

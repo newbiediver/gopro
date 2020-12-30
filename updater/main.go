@@ -140,8 +140,9 @@ func compareList(serverList *UpdateList) []downloadFileInfo {
 			continue
 		}
 
+		loc, _ := time.LoadLocation("UTC")
 		stat, _ := file.Stat()
-		localFileTime := stat.ModTime()
+		localFileTime := stat.ModTime().In(loc)
 
 		if !serverFileTime.Equal(localFileTime) {
 			curFileInfo := downloadFileInfo{fileName: curFilePath, lastModTime: serverFileTime}

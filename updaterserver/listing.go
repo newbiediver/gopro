@@ -1,7 +1,7 @@
 package main
 
 import (
-	"nm.go/go-server/tools/updaterserver/config"
+	"github.com/newbiediver/gopro/updaterserver/config"
 	"strings"
 )
 
