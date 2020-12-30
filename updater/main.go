@@ -5,12 +5,15 @@ import (
 	"fmt"
 	"github.com/dustin/go-humanize"
 	"github.com/newbiediver/gopro/updater/config"
+	"github.com/shibukawa/configdir"
 	"io"
 	"io/ioutil"
 	"net/http"
 	"os"
 	"os/exec"
 	"path/filepath"
+	"runtime"
+	"strconv"
 	"strings"
 	"time"
 )
@@ -28,6 +31,7 @@ var (
 	baseUrl string
 	downloadAllTotalSize uint64
 	isDownload bool
+	uIndex int
 )
 
 func (wp *writeProgresser) Write(p []byte) (int, error) {
@@ -49,6 +53,11 @@ func createDownloadDirectory(path string) {
 func main() {
 	sc := config.GetSystemConfig()
 	sc.DefaultConfig()
+
+	args := os.Args[1]
+
+	uIndex, _ = strconv.Atoi(args)
+	fmt.Printf( "Current uindex: %d\n", uIndex)
 
 	fmt.Printf("Loading config file...updater.yml")
 	yaml, isLoaded := sc.LoadYaml("updater.yml")
@@ -204,6 +213,21 @@ func downloadFiles(files []downloadFileInfo) {
 	}
 }
 
+func updateIndex() {
+	strUIndex := strconv.Itoa(uIndex)
+	bytes := []byte(strUIndex)
+
+	if runtime.GOOS == "windows" {
+		dirPath := configdir.New("", "PADICP")
+		cf := dirPath.QueryCacheFolder()
+		_ = cf.WriteFile("uindex.bin", bytes)
+	} else {
+		dirPath := configdir.New("", "PADICP")
+		cf := dirPath.QueryFolders(configdir.Global)
+		_ = cf[0].WriteFile("uindex.bin", bytes)
+	}
+}
+
 func updateFiles(srcPath, dstPath string) {
 	sc := config.GetSystemConfig()
 	if isDownload {
@@ -251,6 +275,8 @@ func updateFiles(srcPath, dstPath string) {
 	if err != nil {
 		fmt.Println(err)
 	}
+
+	updateIndex()
 }
 
 func copyFile(src, dst string) (int64, error) {

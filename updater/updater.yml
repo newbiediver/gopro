@@ -2,6 +2,7 @@ server:
   address: 10.10.10.10
   port: 2338
 local:
-  launch: notepad.exe
+  name: PADICP
+  launch: PADICP.exe
 #  args: "-id value ..."  # 인자가 있을 경우
 #  download: "__update"   # 다운로드 임시 폴더를 변경할 경우

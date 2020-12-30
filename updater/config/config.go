@@ -9,6 +9,7 @@ import (
 type SystemConfig struct {
 	UpdaterServer	string
 	UpdaterPort		uint
+	LocalName		string
 	LaunchPath		string
 	LaunchArg		string
 	DownloadPath	string
@@ -64,6 +65,13 @@ func (args *SystemConfig) SetConfig(data *YamlConfig) error {
 		args.UpdaterPort = uint(port.(int))
 	} else {
 		return errors.New("No port field")
+	}
+
+	name := data.Local["name"]
+	if name != nil {
+		args.LocalName = name.(string)
+	} else {
+		return errors.New("No Local name field")
 	}
 
 	launchPath := data.Local["launch"]
