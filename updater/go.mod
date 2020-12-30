@@ -1,6 +1,6 @@
-module nm.go/go-server/tools/updater
+module github.com/newbiediver/gopro/updater
 
-go 1.14
+go 1.15
 
 require (
 	github.com/dustin/go-humanize v1.0.0

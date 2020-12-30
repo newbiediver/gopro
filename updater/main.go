@@ -4,10 +4,10 @@ import (
 	"encoding/json"
 	"fmt"
 	"github.com/dustin/go-humanize"
+	"github.com/newbiediver/gopro/updater/config"
 	"io"
 	"io/ioutil"
 	"net/http"
-	"nm.go/go-server/tools/updater/config"
 	"os"
 	"os/exec"
 	"path/filepath"
@@ -105,7 +105,7 @@ func listing() *UpdateList {
 
 func compareList(serverList *UpdateList) []downloadFileInfo {
 	var downloadList []downloadFileInfo
-	tmpLocation := time.Local
+	tmpLocation := time.UTC
 	sc := config.GetSystemConfig()
 	for _, v := range serverList.Files {
 		filePath := "." + v.FileName
@@ -144,7 +144,11 @@ func compareList(serverList *UpdateList) []downloadFileInfo {
 		stat, _ := file.Stat()
 		localFileTime := stat.ModTime().In(loc)
 
-		if !serverFileTime.Equal(localFileTime) {
+		strLocalFileTime := fmt.Sprintf("%04d.%02d.%02d %02d:%02d:%02d", localFileTime.Year(), localFileTime.Month(), localFileTime.Day(), localFileTime.Hour(), localFileTime.Minute(), localFileTime.Second() )
+		strServerFileTime := fmt.Sprintf("%04d.%02d.%02d %02d:%02d:%02d", serverFileTime.Year(), serverFileTime.Month(), serverFileTime.Day(), serverFileTime.Hour(), serverFileTime.Minute(), serverFileTime.Second() )
+
+		if strLocalFileTime != strServerFileTime {
+		//if !serverFileTime.Equal(localFileTime) {
 			curFileInfo := downloadFileInfo{fileName: curFilePath, lastModTime: serverFileTime}
 			downloadList = append(downloadList, curFileInfo)
 			downloadAllTotalSize = downloadAllTotalSize + uint64(v.FileSize)
@@ -188,12 +192,14 @@ func downloadFiles(files []downloadFileInfo) {
 			panic(err)
 		}
 
+
 		_, err = io.Copy(out, io.TeeReader(resp.Body, counter))
 		if err != nil {
 			panic(err)
 		} else {
+
 			_ = out.Close()
-			_ = os.Chtimes(localPath, str.lastModTime, str.lastModTime)
+			_ = os.Chtimes(localPath, str.lastModTime.UTC(), str.lastModTime.UTC())
 		}
 	}
 }
