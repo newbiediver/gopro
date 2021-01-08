@@ -54,10 +54,13 @@ func main() {
 	sc := config.GetSystemConfig()
 	sc.DefaultConfig()
 
-	args := os.Args[1]
+	curDir, _ := filepath.Abs(filepath.Dir(os.Args[0]))
+	fmt.Printf("curDir: %s\n", curDir)
 
-	uIndex, _ = strconv.Atoi(args)
-	fmt.Printf( "Current uindex: %d\n", uIndex)
+	args := os.Args[1]
+	firstArg := strings.Split(args, "=")
+	fmt.Printf( "Current uindex: %s\n", firstArg[1])
+	uIndex, _ = strconv.Atoi(firstArg[1])
 
 	fmt.Printf("Loading config file...updater.yml")
 	yaml, isLoaded := sc.LoadYaml("updater.yml")
@@ -74,6 +77,8 @@ func main() {
 	baseUrl = fmt.Sprintf("http://%s:%d", sc.UpdaterServer, sc.UpdaterPort)
 
 	createDownloadDirectory(sc.DownloadPath)
+
+	time.Sleep(time.Second)
 
 	allList := listing()
 	if allList != nil {
